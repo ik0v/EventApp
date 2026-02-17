@@ -30,6 +30,35 @@ function ListEvents() {
     );
 }
 
+function AddEventForm() {
+    const [title, setTitle] = useState("");
+
+    async function saveEvent(e) {
+        e.preventDefault();
+        await fetch("/api/events", {
+            method: "POST",
+            body: JSON.stringify({ title }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    }
+
+    return (
+        <form onSubmit={saveEvent}>
+            <h1>Add Event</h1>
+            <div>
+                Title:
+                <br />
+                <input value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div>
+                <button>Submit</button>
+            </div>
+        </form>
+    );
+}
+
 function FrontPage() {
 
     const [counter, setCounter] = useState(0);
@@ -42,6 +71,7 @@ function FrontPage() {
         <div>You have clicked {counter} times</div>
 
         <ListEvents />
+        <AddEventForm />
     </>
 }
 
