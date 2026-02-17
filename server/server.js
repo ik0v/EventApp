@@ -24,4 +24,13 @@ eventsApi.post("/api/events", (req, res) => {
 
 app.use(eventsApi);
 
+app.use((req) => {
+    if(req.method === "GET" && !req.path.startsWith("/api")) {
+        res.sendFile(path.resolve("../client/dist/index.html"));
+    }
+    console.log("logging: ", req.path);
+    next();
+})
+
+
 app.listen(3000);
