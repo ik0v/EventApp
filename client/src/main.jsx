@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { FrontPage } from "./pages/frontPage";
-import { LoginButton } from "./components/LoginButton";
-import { LoginCallback } from "./pages/LoginCallback";
+import FrontPage from "./pages/frontPage";
+import LoginButton from "./components/LoginButton";
+import LoginCallback from "./pages/LoginCallback";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

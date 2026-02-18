@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function LoginCallback() {
+export default function LoginCallback() {
   const navigate = useNavigate();
 
   const callbackParameters = Object.fromEntries(

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export function AddEventForm() {
+export default function AddEventForm() {
   const [title, setTitle] = useState("");
 
   async function saveEvent(e) {

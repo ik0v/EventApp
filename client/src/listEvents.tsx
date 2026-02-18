@@ -5,7 +5,7 @@ export type EventItem = {
   title: string;
 };
 
-export function ListEvents() {
+export default function ListEvents() {
   const [events, setEvents] = useState<EventItem[]>([]);
 
   async function loadEvents(): Promise<void> {

@@ -59,6 +59,11 @@ app.get("/api/profile", (req, res) => {
   }
 });
 
+app.post("/api/logout", (req, res) => {
+  res.clearCookie("access_token");
+  res.sendStatus(204);
+});
+
 app.use(eventsApi);
 
 app.use((req, res, next) => {

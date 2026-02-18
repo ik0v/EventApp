@@ -6,7 +6,7 @@ async function fetchJson(url, options) {
   return await res.json();
 }
 
-export function LoginButton() {
+export default function LoginButton() {
   const [authorizationUrl, setAuthorizationUrl] = useState();
 
   async function generateAuthorizationUrl() {

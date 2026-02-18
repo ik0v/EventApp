@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { ListEvents } from "../listEvents";
-import { AddEventForm } from "../components/addEventForm";
-import { UserProfile } from "../components/userProfile";
+import ListEvents from "../listEvents";
+import AddEventForm from "../components/addEventForm";
+import UserProfile from "../components/userProfile";
 
-export function FrontPage() {
+export default function FrontPage() {
   const [counter, setCounter] = useState(0);
 
   return (
