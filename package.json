@@ -1,15 +1,17 @@
 {
-  "devDependencies":{
-    "concurrently":"^9.2.1"
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "prettier": "^3.8.1"
   },
-  "scripts":{
-    "dev":"concurrently npm:dev:client npm:dev:server",
-    "dev:client":"cd client && npm run dev",
-    "dev:server":"cd server && npm run dev",
+  "scripts": {
+    "dev": "concurrently npm:dev:client npm:dev:server",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
     "start": "cd server && npm start",
     "postinstall": "npm run install:client && npm run install:server",
     "install:client": "cd client && npm install --include=dev",
     "install:server": "cd server && npm install",
-    "build": "cd client && npm run build"
+    "build": "cd client && npm run build",
+    "prettier:check": "prettier --check ."
   }
 }
