@@ -21,6 +21,33 @@ eventsApi.post("/api/events", (req, res) => {
   res.sendStatus(201);
 });
 
+app.use(async (req, res, next) => {
+  const { access_token } = req.signedCookies;
+  if (access_token) {
+    const { userinfo_endpoint } = await fetchJSON(
+      "https://accounts.google.com/.well-known/openid-configuration",
+    );
+    req.userinfo = await fetchJSON(userinfo_endpoint, {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+  }
+  next();
+});
+
+app.post("/api/login", (req, res) => {
+  const { access_token } = req.body;
+  res.cookie("access_token", access_token, { signed: true });
+  res.sendStatus(204);
+});
+
+app.get("/profile", (req, res) => {
+  if (!req.userinfo) {
+    res.send(401);
+  } else {
+    res.send(req.userinfo);
+  }
+});
+
 app.use(eventsApi);
 
 app.use((req) => {
