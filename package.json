@@ -17,6 +17,5 @@
     "test:client": "cd client && npm test",
     "prettier:check": "prettier --check .",
     "prepare": "husky"
-  },
-  "type": "module"
+  }
 }
