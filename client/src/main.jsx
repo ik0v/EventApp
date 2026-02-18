@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
-import { Route, Routes } from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ListEvents } from "./listEvents";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -10,28 +10,6 @@ root.render(
     <Application />
   </BrowserRouter>,
 );
-
-function ListEvents() {
-  const [events, setEvents] = useState([]);
-
-  async function loadEvents() {
-    const res = await fetch("/api/events");
-    setEvents(await res.json());
-  }
-
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  return (
-    <>
-      <h1>Events</h1>
-      {events.map((e) => (
-        <div key={e.id}>{e.title}</div>
-      ))}
-    </>
-  );
-}
 
 function AddEventForm() {
   const [title, setTitle] = useState("");
