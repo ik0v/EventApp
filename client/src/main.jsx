@@ -23,8 +23,8 @@ function ListEvents() {
     return (
         <>
             <h1>Events</h1>
-            {events.map((m) => (
-                <div>{m.title}</div>
+            {events.map((e) => (
+                <div key={e.id}>{e.title}</div>
             ))}
         </>
     );
