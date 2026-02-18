@@ -1,8 +1,19 @@
 import express from "express";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import path from "path";
 
+dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.static("../client/dist"));
+app.use(cookieParser(process.env.SESSION_SECRET));
+
+async function fetchJSON(url, options) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return await res.json();
+}
 
 export const eventsApi = new express.Router();
 
@@ -34,15 +45,15 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.post("/api/login", (req, res) => {
+app.post("/api/login/accessToken", (req, res) => {
   const { access_token } = req.body;
-  res.cookie("access_token", access_token, { signed: true });
+  res.cookie("access_token", access_token, { signed: true, httpOnly: true });
   res.sendStatus(204);
 });
 
-app.get("/profile", (req, res) => {
+app.get("/api/profile", (req, res) => {
   if (!req.userinfo) {
-    res.send(401);
+    res.sendStatus(401);
   } else {
     res.send(req.userinfo);
   }
@@ -50,7 +61,7 @@ app.get("/profile", (req, res) => {
 
 app.use(eventsApi);
 
-app.use((req) => {
+app.use((req, res, next) => {
   if (req.method === "GET" && !req.path.startsWith("/api")) {
     res.sendFile(path.resolve("../client/dist/index.html"));
   }
