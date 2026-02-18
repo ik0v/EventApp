@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
     "prettier": "^3.8.1"
   },
   "scripts": {
@@ -12,6 +13,8 @@
     "install:client": "cd client && npm install --include=dev",
     "install:server": "cd server && npm install",
     "build": "cd client && npm run build",
-    "prettier:check": "prettier --check ."
+    "test": "npm run prettier:check",
+    "prettier:check": "prettier --check .",
+    "prepare": "husky"
   }
 }
