@@ -16,7 +16,8 @@ root.render(
 function Application() {
   return (
     <Routes>
-      <Route path={"/"} element={<FrontPage />} />
+      <Route path={"/"} element={<LoginButton />} />
+      <Route path={"/frontPage"} element={<FrontPage />} />
       <Route path={"*"} element={<h1>Page not found</h1>} />
       <Route path={"/login"} element={<LoginButton />} />
       <Route path={"/login/callback"} element={<LoginCallback />} />
