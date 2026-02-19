@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import LogoutButton from "./LogoutButton";
-import LoginButton from "./LoginButton";
+import LogoutButton from "./logoutButton";
+import LoginButton from "./loginButton";
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);
