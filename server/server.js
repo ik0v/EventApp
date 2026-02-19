@@ -6,7 +6,7 @@ import path from "path";
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(express.static("../client/dist"));
+app.use(express.static(path.resolve("../client/dist")));
 app.use(cookieParser(process.env.SESSION_SECRET));
 
 async function fetchJSON(url, options) {
@@ -69,9 +69,9 @@ app.use(eventsApi);
 app.use((req, res, next) => {
   if (req.method === "GET" && !req.path.startsWith("/api")) {
     res.sendFile(path.resolve("../client/dist/index.html"));
+  } else {
+    next();
   }
-  console.log("logging: ", req.path);
-  next();
 });
 
 app.listen(process.env.PORT || 3000);
