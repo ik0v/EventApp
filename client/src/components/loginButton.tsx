@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-async function fetchJson(url, options) {
+async function fetchJson(url: string, options?: RequestInit) {
   const res = await fetch(url, options);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export default function LoginButton() {
-  const [authorizationUrl, setAuthorizationUrl] = useState();
+  const [authorizationUrl, setAuthorizationUrl] = useState<string>("");
 
   async function generateAuthorizationUrl() {
     const discoveryDoc = await fetchJson(
@@ -16,7 +16,7 @@ export default function LoginButton() {
 
     const parameters = {
       response_type: "token",
-      client_id: import.meta.env.VITE_G_CLIENT_ID,
+      client_id: String(import.meta.env.VITE_G_CLIENT_ID ?? ""),
       redirect_uri: window.location.origin + "/login/callback",
       scope: "profile email",
     };

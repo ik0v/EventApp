@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 
 export default function AddEventForm() {
   const [title, setTitle] = useState("");
 
-  async function saveEvent(e) {
+  async function saveEvent(e: FormEvent) {
     e.preventDefault();
     await fetch("/api/events", {
       method: "POST",

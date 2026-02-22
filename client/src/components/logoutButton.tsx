@@ -1,4 +1,8 @@
-export default function LogoutButton({ onLogout }) {
+type LogoutButtonProps = {
+  onLogout?: () => void;
+};
+
+export default function LogoutButton({ onLogout }: LogoutButtonProps) {
   async function logout() {
     await fetch("/api/logout", { method: "POST" });
     onLogout?.();

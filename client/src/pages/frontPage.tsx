@@ -4,7 +4,7 @@ import AddEventForm from "../components/addEventForm";
 import UserProfile from "../components/userProfile";
 
 export default function FrontPage() {
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState<number>(0);
 
   return (
     <>

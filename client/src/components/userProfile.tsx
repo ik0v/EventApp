@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import LogoutButton from "./logoutButton";
 import LoginButton from "./loginButton";
 
+type User = {
+  name: string;
+  email: string;
+  picture: string;
+};
+
 export default function UserProfile() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   async function loadProfile() {
     const res = await fetch("/api/profile");
@@ -13,7 +19,7 @@ export default function UserProfile() {
       return;
     }
 
-    const data = await res.json();
+    const data: User = await res.json();
     setUser(data);
   }
 
