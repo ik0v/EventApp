@@ -68,13 +68,18 @@ eventsApi.post("/api/events", (req, res) => {
 
 app.use(async (req, res, next) => {
   const { access_token } = req.signedCookies;
-  if (access_token) {
+  if (!access_token) return next();
+
+  try {
     const { userinfo_endpoint } = await fetchJSON(
       "https://accounts.google.com/.well-known/openid-configuration",
     );
     req.userinfo = await fetchJSON(userinfo_endpoint, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
+  } catch (e) {
+    res.clearCookie("access_token");
+    req.userinfo = undefined;
   }
   next();
 });
