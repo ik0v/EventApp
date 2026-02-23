@@ -1,0 +1,77 @@
+.add-event-form {
+  display: grid;
+  gap: 12px;
+}
+
+.form-title {
+  margin: 0 0 4px;
+}
+
+.form-label {
+  display: grid;
+  gap: 6px;
+}
+
+.form-span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.form-row {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 700px) {
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  outline: none;
+  font: inherit;
+}
+
+.form-input option {
+  background: white;
+  color: black;
+}
+
+.form-input:focus {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-btn {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 0;
+  background: white;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-btn:hover {
+  opacity: 0.95;
+}
+
+.aefError {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  color: rgba(255, 220, 220, 0.95);
+  font-size: 14px;
+}

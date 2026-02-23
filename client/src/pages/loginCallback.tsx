@@ -17,7 +17,7 @@ export default function LoginCallback() {
       headers: { "content-type": "application/json" },
     });
 
-    navigate("/frontPage");
+    navigate("/events");
   }
 
   useEffect(() => {

@@ -23,14 +23,14 @@ export default function NavBar() {
       </div>
 
       <div className="navCenter">
-        <Link className="navLink navLinkCenter" to="/frontPage">
+        <Link className="navLink navLinkCenter" to="/events">
           Events
         </Link>
       </div>
 
       <div className="navRight">
         {loggedIn ? (
-          <Link className="navLink" to="/addEvent">
+          <Link className="navLink" to="/add">
             Add event
           </Link>
         ) : null}
