@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ListEvents from "../listEvents";
+import ListEvents from "../components/listEvents";
 import AddEventForm from "../components/addEventForm";
 import NavBar from "../components/navBar";
 import "./eventsPage.css";
@@ -15,10 +15,6 @@ export default function EventsPage() {
         <h2>Welcome</h2>
         <section id="events" className="fpSection">
           <ListEvents />
-        </section>
-
-        <section id="add" className="fpSection">
-          <AddEventForm />
         </section>
       </main>
     </div>

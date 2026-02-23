@@ -1,0 +1,153 @@
+.events {
+  display: grid;
+  gap: 12px;
+}
+
+.events-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.events-title {
+  margin: 0;
+}
+
+.events-reload {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  cursor: pointer;
+}
+
+.events-reload:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.events-muted {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.events-error {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  color: rgba(255, 220, 220, 0.95);
+  font-size: 14px;
+}
+
+.events-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 700px) {
+  .events-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.event-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+
+  background: #151a2e;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.event-media {
+  width: 96px;
+  height: 96px;
+}
+
+.event-image,
+.event-image-placeholder {
+  width: 96px;
+  height: 96px;
+  border-radius: 10px;
+  display: block;
+}
+
+.event-image {
+  object-fit: cover;
+}
+
+.event-image-placeholder {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+.event-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.event-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.event-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.event-badge {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+}
+
+.event-description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.event-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.event-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.event-label {
+  width: 52px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+
+.event-value {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -17,14 +17,17 @@ export default function NavBar() {
     <header className="nav">
       <div className="navLeft">
         <div className="navBrand">EventApp</div>
-        <Link className="navLink" to="/about">
-          About
-        </Link>
       </div>
 
       <div className="navCenter">
+        <Link className="navLink navLinkCente" to="/about">
+          About
+        </Link>
         <Link className="navLink navLinkCenter" to="/events">
           Events
+        </Link>
+        <Link className="navLink navLinkCenter" to="/">
+          Login
         </Link>
       </div>
 

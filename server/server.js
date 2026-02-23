@@ -18,8 +18,42 @@ async function fetchJSON(url, options) {
 export const eventsApi = new express.Router();
 
 const events = [
-  { title: "Event 1", id: 0 },
-  { title: "Event 2", id: 1 },
+  {
+    id: 1,
+    title: "Event 1",
+    description:
+      "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
+    place: "Oslo",
+    time: "2026-02-23T18:30:00Z",
+    category: "Fun",
+  },
+  {
+    id: 2,
+    title: "Event 2",
+    description:
+      "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
+    place: "Bergen",
+    time: "2026-02-23T18:30:00Z",
+    category: "Fun",
+  },
+  {
+    id: 3,
+    title: "Event 3",
+    description:
+      "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
+    place: "Asker",
+    time: "2026-02-23T18:30:00Z",
+    category: "Fun",
+  },
+  {
+    id: 3,
+    title: "Event 4",
+    description:
+      "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
+    place: "Horten",
+    time: "2026-02-23T18:30:00Z",
+    category: "Fun",
+  },
 ];
 
 eventsApi.get("/api/events", (req, res) => {
@@ -28,7 +62,7 @@ eventsApi.get("/api/events", (req, res) => {
 
 eventsApi.post("/api/events", (req, res) => {
   const { title } = req.body;
-  events.push({ title, id: events.length });
+  events.push({ title, id: events.length + 1 });
   res.sendStatus(201);
 });
 
