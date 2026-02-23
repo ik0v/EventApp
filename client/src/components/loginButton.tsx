@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./loginButton.css";
 
 async function fetchJson(url: string, options?: RequestInit) {
   const res = await fetch(url, options);
@@ -32,5 +33,9 @@ export default function LoginButton() {
     generateAuthorizationUrl();
   }, []);
 
-  return <a href={authorizationUrl}>Log in with Google</a>;
+  return (
+    <a className="btn" href={authorizationUrl}>
+      Log in with Google
+    </a>
+  );
 }

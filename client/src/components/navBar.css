@@ -1,0 +1,92 @@
+.nav {
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+
+  background: #151a2e;
+  border-radius: 999px;
+  padding: 10px 12px;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+
+  height: 56px;
+  box-sizing: border-box;
+}
+
+.navLeft,
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.navRight {
+  justify-content: flex-end;
+}
+
+.navRight,
+.navChip {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.navCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.navAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+
+.navBrand {
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.navChip {
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+
+.navLink:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+}
+
+/* make center link slightly more “primary” */
+.navLinkCenter {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Mobile: allow wrapping, but keep center centered */
+@media (max-width: 520px) {
+  .nav {
+    border-radius: 16px;
+    grid-template-columns: 1fr; /* stack */
+    justify-items: center;
+  }
+  .navLeft,
+  .navRight {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

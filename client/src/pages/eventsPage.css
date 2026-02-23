@@ -1,0 +1,36 @@
+.fp {
+  min-height: 100vh;
+  background: #0b1020;
+  color: white;
+  padding: 16px;
+}
+
+.fpMain {
+  width: 100%;
+  max-width: 900px;
+  margin: 18px auto 0; /* centered always */
+  display: grid;
+  gap: 16px;
+}
+
+.fpSection {
+  background: #151a2e;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.fpBtn {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 0;
+  background: white;
+  color: black;
+  font-weight: 600;
+}
+
+.fpMuted {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}

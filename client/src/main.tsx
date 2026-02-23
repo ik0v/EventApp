@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import FrontPage from "./pages/frontPage";
-import LoginButton from "./components/loginButton";
+import EventsPage from "./pages/eventsPage";
+import LoginPage from "./pages/loginPage";
 import LoginCallback from "./pages/loginCallback";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
@@ -16,10 +16,10 @@ root.render(
 function Application() {
   return (
     <Routes>
-      <Route path={"/"} element={<LoginButton />} />
-      <Route path={"/frontPage"} element={<FrontPage />} />
+      <Route path={"/"} element={<LoginPage />} />
+      <Route path={"/frontPage"} element={<EventsPage />} />
       <Route path={"*"} element={<h1>Page not found</h1>} />
-      <Route path={"/login"} element={<LoginButton />} />
+      <Route path={"/login"} element={<LoginPage />} />
       <Route path={"/login/callback"} element={<LoginCallback />} />
     </Routes>
   );
