@@ -21,55 +21,6 @@ async function fetchJSON(url: string, options?: RequestInit) {
 const router = express.Router();
 export const eventsApi = router;
 
-// const events = [
-//   {
-//     id: 1,
-//     title: "Event 1",
-//     description:
-//       "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
-//     place: "Oslo",
-//     time: "2026-02-23T18:30:00Z",
-//     category: "Fun",
-//   },
-//   {
-//     id: 2,
-//     title: "Event 2",
-//     description:
-//       "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
-//     place: "Bergen",
-//     time: "2026-02-23T18:30:00Z",
-//     category: "Fun",
-//   },
-//   {
-//     id: 3,
-//     title: "Event 3",
-//     description:
-//       "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
-//     place: "Asker",
-//     time: "2026-02-23T18:30:00Z",
-//     category: "Fun",
-//   },
-//   {
-//     id: 3,
-//     title: "Event 4",
-//     description:
-//       "lorem ipsum dolor sit amet, consetetur lorem ipsum dolor sit amet, consetetur",
-//     place: "Horten",
-//     time: "2026-02-23T18:30:00Z",
-//     category: "Fun",
-//   },
-// ];
-
-// eventsApi.get("/api/events", (req, res) => {
-//   res.send(events);
-// });
-//
-// eventsApi.post("/api/events", (req, res) => {
-//   const { title } = req.body;
-//   events.push({ title, id: events.length + 1 });
-//   res.sendStatus(201);
-// });
-
 type AuthedRequest = Request & { userinfo?: unknown };
 
 app.use(async (req: AuthedRequest, res: Response, next: NextFunction) => {
@@ -90,30 +41,6 @@ app.use(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   }
 
   next();
-});
-
-// app.use(async (req, res, next) => {
-//   const { access_token } = req.signedCookies;
-//   if (!access_token) return next();
-//
-//   try {
-//     const { userinfo_endpoint } = await fetchJSON(
-//       "https://accounts.google.com/.well-known/openid-configuration",
-//     );
-//     (req as any).userinfo = await fetchJSON(userinfo_endpoint, {
-//       headers: { Authorization: `Bearer ${access_token}` },
-//     });
-//   } catch (e) {
-//     res.clearCookie("access_token");
-//     req.userinfo = undefined;
-//   }
-//   next();
-// });
-
-app.post("/api/login/accessToken", (req, res) => {
-  const { access_token } = req.body;
-  res.cookie("access_token", access_token, { signed: true, httpOnly: true });
-  res.sendStatus(204);
 });
 
 app.get("/api/profile", (req: AuthedRequest, res) => {
@@ -140,12 +67,51 @@ app.use((req, res, next) => {
 const client = new MongoClient(process.env["MONGODB_URL"]!);
 client.connect().then(async (con) => {
   const db = con.db("event-app");
-  const result = await db
-    .collection("events")
-    .find({ category: "Fun" })
-    .toArray();
-  console.log(result);
   app.use(eventApi(db));
+});
+
+// app.post("/api/login/accessToken", (req, res) => {
+//   const { access_token } = req.body;
+//   res.cookie("access_token", access_token, { signed: true, httpOnly: true });
+//   res.sendStatus(204);
+// });
+
+app.post("/api/login/accessToken", async (req, res) => {
+  const { access_token } = req.body;
+  try {
+    const { userinfo_endpoint } = await fetchJSON(
+      "https://accounts.google.com/.well-known/openid-configuration",
+    );
+    const userinfo = await fetchJSON(userinfo_endpoint, {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+    console.log("USERINFO:", userinfo);
+    const { sub, email, name, picture } = userinfo;
+
+    const db = client.db("event-app");
+    try {
+      await db.collection("users").updateOne(
+        { email },
+        {
+          $set: {
+            sub,
+            email,
+            name: name ?? null,
+            picture: picture ?? null,
+            lastLoginAt: new Date(),
+          },
+          $setOnInsert: { createdAt: new Date() },
+        },
+        { upsert: true },
+      );
+    } catch (err) {
+      console.error("DB ERROR:", err);
+    }
+    res.cookie("access_token", access_token, { signed: true, httpOnly: true });
+    res.sendStatus(204);
+  } catch (e) {
+    res.status(401).send("Invalid token");
+  }
 });
 
 app.listen(process.env.PORT || 3000);

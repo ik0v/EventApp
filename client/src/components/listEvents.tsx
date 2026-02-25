@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import "./listEvents.css";
 
+export type Attendee = {
+  userSub: string;
+  joinedAt?: string;
+};
+
 export type EventItem = {
-  id: string | number;
+  _id: string | number;
   title: string;
   description?: string;
   place?: string;
   time?: string;
   category?: string;
   imageUrl?: string;
+  attendees?: Attendee[];
 };
 
 function formatWhen(value?: string) {
@@ -22,6 +28,21 @@ export default function ListEvents() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [mySub, setMySub] = useState<string | null>(null);
+
+  async function loadProfile(): Promise<void> {
+    try {
+      const res = await fetch("/api/profile");
+      if (!res.ok) {
+        setMySub(null);
+        return;
+      }
+      const data = await res.json();
+      setMySub(data?.sub ?? null);
+    } catch {
+      setMySub(null);
+    }
+  }
 
   async function loadEvents(): Promise<void> {
     try {
@@ -40,7 +61,30 @@ export default function ListEvents() {
     }
   }
 
+  async function toggleAttend(eventId: string | number, isJoined: boolean) {
+    setError("");
+    if (!mySub) {
+      setError("You must be logged in to join events.");
+      return;
+    }
+    const options: RequestInit = {
+      method: isJoined ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+    if (!isJoined) {
+      options.body = JSON.stringify({ status: "going" });
+    }
+    const res = await fetch(`/api/events/${eventId}/attend`, options);
+
+    if (!res.ok) {
+      setError(`${res.status} ${res.statusText}`);
+      return;
+    }
+    await loadEvents();
+  }
+
   useEffect(() => {
+    loadProfile();
     loadEvents();
   }, []);
 
@@ -61,48 +105,64 @@ export default function ListEvents() {
         <div className="events-muted">No events yet.</div>
       ) : (
         <div className="events-grid">
-          {events.map((e) => (
-            <article key={e.id} className="event-card">
-              <div className="event-media">
-                {e.imageUrl ? (
-                  <img className="event-image" src={e.imageUrl} alt="" />
-                ) : (
-                  <div className="event-image-placeholder" aria-hidden="true">
-                    No image
+          {events.map((e) => {
+            const isJoined =
+              !!mySub && (e.attendees ?? []).some((a) => a.userSub === mySub);
+
+            return (
+              <article key={e._id} className="event-card">
+                <div className="event-media">
+                  {e.imageUrl ? (
+                    <img className="event-image" src={e.imageUrl} alt="" />
+                  ) : (
+                    <div className="event-image-placeholder" aria-hidden="true">
+                      No image
+                    </div>
+                  )}
+                </div>
+
+                <div className="event-body">
+                  <div className="event-top">
+                    <h3 className="event-title">{e.title}</h3>
+                    {e.category ? (
+                      <span className="event-badge">{e.category}</span>
+                    ) : null}
                   </div>
-                )}
-              </div>
 
-              <div className="event-body">
-                <div className="event-top">
-                  <h3 className="event-title">{e.title}</h3>
-                  {e.category ? (
-                    <span className="event-badge">{e.category}</span>
+                  {e.description ? (
+                    <p className="event-description">{e.description}</p>
                   ) : null}
+
+                  <div className="event-meta">
+                    {e.place ? (
+                      <div className="event-row">
+                        <span className="event-label">Place</span>
+                        <span className="event-value">{e.place}</span>
+                      </div>
+                    ) : null}
+
+                    {e.time ? (
+                      <div className="event-row">
+                        <span className="event-label">Time</span>
+                        <span className="event-value">
+                          {formatWhen(e.time)}
+                        </span>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <button
+                    className={`event-join-btn ${isJoined ? "joined" : ""}`}
+                    onClick={() => toggleAttend(e._id, isJoined)}
+                    disabled={!mySub}
+                    type="button"
+                  >
+                    {mySub ? (isJoined ? "Leave" : "Join") : "Login to join"}
+                  </button>
                 </div>
-
-                {e.description ? (
-                  <p className="event-description">{e.description}</p>
-                ) : null}
-
-                <div className="event-meta">
-                  {e.place ? (
-                    <div className="event-row">
-                      <span className="event-label">Place</span>
-                      <span className="event-value">{e.place}</span>
-                    </div>
-                  ) : null}
-
-                  {e.time ? (
-                    <div className="event-row">
-                      <span className="event-label">Time</span>
-                      <span className="event-value">{formatWhen(e.time)}</span>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>

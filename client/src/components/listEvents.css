@@ -151,3 +151,32 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.event-join-btn {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+
+  border: 1px solid rgba(80, 160, 255, 0.4);
+  background: rgba(80, 160, 255, 0.15);
+  color: rgba(200, 220, 255, 0.95);
+
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.event-join-btn:hover {
+  background: rgba(80, 160, 255, 0.25);
+  border-color: rgba(120, 180, 255, 0.6);
+}
+
+.event-join-btn:active {
+  transform: scale(0.97);
+}
+
+.event-join-btn {
+  width: 100%;
+}
