@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "./authContext";
 import "./listEvents.css";
 
 export type Attendee = {
@@ -30,20 +31,21 @@ export default function ListEvents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [mySub, setMySub] = useState<string | null>(null);
+  const { loggedIn, isAdmin, sub, loadingUser } = useAuth();
 
-  async function loadProfile(): Promise<void> {
-    try {
-      const res = await fetch("/api/profile");
-      if (!res.ok) {
-        setMySub(null);
-        return;
-      }
-      const data = await res.json();
-      setMySub(data?.sub ?? null);
-    } catch {
-      setMySub(null);
-    }
-  }
+  // async function loadProfile(): Promise<void> {
+  //   try {
+  //     const res = await fetch("/api/profile");
+  //     if (!res.ok) {
+  //       setMySub(null);
+  //       return;
+  //     }
+  //     const data = await res.json();
+  //     setMySub(data?.sub ?? null);
+  //   } catch {
+  //     setMySub(null);
+  //   }
+  // }
 
   async function loadEvents(): Promise<void> {
     try {
@@ -64,7 +66,7 @@ export default function ListEvents() {
 
   async function toggleAttend(eventId: string | number, isJoined: boolean) {
     setError("");
-    if (!mySub) {
+    if (!sub) {
       setError("You must be logged in to join events.");
       return;
     }
@@ -85,7 +87,6 @@ export default function ListEvents() {
   }
 
   useEffect(() => {
-    loadProfile();
     loadEvents();
   }, []);
 
@@ -108,7 +109,7 @@ export default function ListEvents() {
         <div className="events-grid">
           {events.map((e) => {
             const isJoined =
-              !!mySub && (e.attendees ?? []).some((a) => a.userSub === mySub);
+              !!sub && (e.attendees ?? []).some((a) => a.userSub === sub);
 
             return (
               <article key={e._id} className="event-card">
@@ -160,10 +161,10 @@ export default function ListEvents() {
                   <button
                     className={`event-join-btn ${isJoined ? "joined" : ""}`}
                     onClick={() => toggleAttend(e._id, isJoined)}
-                    disabled={!mySub}
+                    disabled={!sub}
                     type="button"
                   >
-                    {mySub ? (isJoined ? "Leave" : "Join") : "Login to join"}
+                    {sub ? (isJoined ? "Leave" : "Join") : "Login to join"}
                   </button>
                 </div>
               </article>

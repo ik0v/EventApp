@@ -6,12 +6,15 @@ import EventPage from "./pages/eventPage";
 import LoginPage from "./pages/loginPage";
 import LoginCallback from "./pages/loginCallback";
 import AddEventPage from "./pages/addEventPage";
+import { AuthProvider } from "./components/authContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
   <BrowserRouter>
-    <Application />
+    <AuthProvider>
+      <Application />
+    </AuthProvider>
   </BrowserRouter>,
 );
 

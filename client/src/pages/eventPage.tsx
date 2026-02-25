@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import NavBar from "../components/navBar";
+import { useAuth } from "../components/authContext";
 import "./eventPage.css";
 import "./eventsPage.css";
 
@@ -33,26 +34,10 @@ function formatWhen(value?: string) {
 export default function EventPage() {
   const { id } = useParams();
   const [event, setEvent] = useState<EventItem | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [mySub, setMySub] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  async function loadProfile() {
-    try {
-      const res = await fetch("/api/profile");
-      if (!res.ok) {
-        setMySub(null);
-        setIsAdmin(false);
-        return;
-      }
-      const data = await res.json();
-      setMySub(data?.sub ?? null);
-      setIsAdmin(data?.isAdmin ?? false);
-    } catch {
-      setMySub(null);
-    }
-  }
+  const [loading, setLoading] = useState(true);
+  const { loggedIn, isAdmin, sub, loadingUser } = useAuth();
 
   async function loadEvent() {
     if (!id) return;
@@ -89,7 +74,6 @@ export default function EventPage() {
   }
 
   useEffect(() => {
-    loadProfile();
     loadEvent();
   }, [id]);
 
@@ -98,7 +82,7 @@ export default function EventPage() {
   if (!event) return <div>Event not found</div>;
 
   const isJoined =
-    !!mySub && (event.attendees ?? []).some((a) => a.userSub === mySub);
+    !!sub && (event.attendees ?? []).some((a) => a.userSub === sub);
 
   return (
     <div className="fp">
@@ -162,10 +146,10 @@ export default function EventPage() {
                   <button
                     className={`event-join-btn ${isJoined ? "joined" : ""}`}
                     onClick={() => toggleAttend(isJoined)}
-                    disabled={!mySub}
+                    disabled={!sub}
                     type="button"
                   >
-                    {mySub ? (isJoined ? "Leave" : "Join") : "Login to join"}
+                    {sub ? (isJoined ? "Leave" : "Join") : "Login to join"}
                   </button>
                 </div>
               </div>

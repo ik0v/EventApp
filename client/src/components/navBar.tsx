@@ -1,22 +1,10 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./navBar.css";
+import { useAuth } from "./authContext";
 import NavUserChip from "./navUserChip";
+import "./navBar.css";
 
 export default function NavBar() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/profile");
-      setLoggedIn(res.ok);
-      if (res.ok) {
-        const data = await res.json();
-        setIsAdmin(data?.isAdmin ?? false);
-      }
-    })();
-  }, []);
+  const { loggedIn, isAdmin, sub, loadingUser } = useAuth();
 
   return (
     <header className="nav">

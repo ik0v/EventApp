@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useAuth } from "./authContext";
 import "./navBar.css";
 
 type User = {
@@ -8,28 +8,15 @@ type User = {
 };
 
 export default function NavUserChip() {
-  const [user, setUser] = useState<User | null>(null);
-
-  async function loadProfile() {
-    const res = await fetch("/api/profile");
-    if (res.status === 401) {
-      setUser(null);
-      return;
-    }
-    const data: User = await res.json();
-    setUser(data);
-  }
+  const { loggedIn, isAdmin, sub, name, email, picture, loadingUser, reload } =
+    useAuth();
 
   async function logout() {
     await fetch("/api/logout", { method: "POST" });
-    await loadProfile();
+    await reload;
   }
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  if (!user) {
+  if (!loggedIn) {
     return (
       <a className="navLogin" href="/login">
         Login
@@ -39,8 +26,8 @@ export default function NavUserChip() {
 
   return (
     <div className="navChip">
-      <img className="navAvatar" src={user.picture} alt="" />
-      <span className="navName">{user.name}</span>
+      <img className="navAvatar" src={picture} alt="" />
+      <span className="navName">{name}</span>
       <button
         className="navLogout"
         onClick={logout}
