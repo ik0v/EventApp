@@ -117,5 +117,22 @@ export function eventApi(db: Db) {
     }
   });
 
+  router.get("/api/events/:id", async (req, res) => {
+    try {
+      const event = await db.collection("events").findOne({
+        _id: new ObjectId(req.params.id),
+      });
+
+      if (!event) return res.sendStatus(404);
+
+      res.json({
+        ...event,
+        _id: event._id.toString(),
+      });
+    } catch {
+      res.status(500).send("Server error");
+    }
+  });
+
   return router;
 }

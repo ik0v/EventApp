@@ -1,0 +1,128 @@
+/* EventPage.css */
+
+.event-page {
+  display: grid;
+  gap: 16px;
+}
+
+.event-page-card {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 16px;
+
+  background: #151a2e;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* Left media column */
+.event-page-media {
+  width: 140px;
+  height: 140px;
+}
+
+.event-page-image,
+.event-page-image-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 10px;
+  display: block;
+}
+
+.event-page-image {
+  object-fit: cover;
+}
+
+.event-page-image-placeholder {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+/* Right content column */
+.event-page-body {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.event-page-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.event-page-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+}
+
+.event-page-description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.event-page-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.event-page-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.event-page-label {
+  width: 60px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+
+.event-page-value {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-page-attendees {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.event-page-actions {
+  margin-top: 4px;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 600px) {
+  .event-page-card {
+    grid-template-columns: 1fr;
+  }
+
+  .event-page-media {
+    width: 100%;
+    height: 200px;
+  }
+
+  .event-page-image,
+  .event-page-image-placeholder {
+    width: 100%;
+    height: 200px;
+  }
+}

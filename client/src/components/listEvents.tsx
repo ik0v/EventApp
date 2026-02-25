@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./listEvents.css";
 
 export type Attendee = {
@@ -111,15 +112,20 @@ export default function ListEvents() {
 
             return (
               <article key={e._id} className="event-card">
-                <div className="event-media">
-                  {e.imageUrl ? (
-                    <img className="event-image" src={e.imageUrl} alt="" />
-                  ) : (
-                    <div className="event-image-placeholder" aria-hidden="true">
-                      No image
-                    </div>
-                  )}
-                </div>
+                <Link to={`/events/${e._id}`} className="event-link">
+                  <div className="event-media">
+                    {e.imageUrl ? (
+                      <img className="event-image" src={e.imageUrl} alt="" />
+                    ) : (
+                      <div
+                        className="event-image-placeholder"
+                        aria-hidden="true"
+                      >
+                        No image
+                      </div>
+                    )}
+                  </div>
+                </Link>
 
                 <div className="event-body">
                   <div className="event-top">
