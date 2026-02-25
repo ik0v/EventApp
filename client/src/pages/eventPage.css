@@ -1,5 +1,3 @@
-/* EventPage.css */
-
 .event-page {
   display: grid;
   gap: 16px;
@@ -13,18 +11,18 @@
   background: #151a2e;
   border-radius: 12px;
   padding: 16px;
+  align-items: stretch; /* 👈 important */
 }
 
-/* Left media column */
+/* Image column */
 .event-page-media {
-  width: 140px;
-  height: 140px;
+  height: 100%;
 }
 
 .event-page-image,
 .event-page-image-placeholder {
-  width: 140px;
-  height: 140px;
+  width: 100%;
+  height: 100%;
   border-radius: 10px;
   display: block;
 }
@@ -34,43 +32,48 @@
 }
 
 .event-page-image-placeholder {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
   display: grid;
   place-items: center;
   font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Right content column */
+/* Content */
 .event-page-body {
   display: grid;
   gap: 10px;
   min-width: 0;
+  position: relative; /* 👈 for badge positioning */
 }
 
 .event-page-title {
   margin: 0;
   font-size: 20px;
   line-height: 1.2;
-  word-break: break-word;
 }
 
+/* 👇 badge now floats top-right */
 .event-page-badge {
-  display: inline-block;
-  width: fit-content;
+  position: absolute;
+  top: 0;
+  right: 0;
+
   padding: 4px 10px;
   border-radius: 999px;
+  font-size: 12px;
+
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.85);
-  font-size: 12px;
 }
 
+/* Text */
 .event-page-description {
   margin: 0;
-  color: rgba(255, 255, 255, 0.75);
   font-size: 14px;
   line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .event-page-meta {
@@ -81,20 +84,17 @@
 .event-page-row {
   display: flex;
   gap: 10px;
-  align-items: baseline;
 }
 
 .event-page-label {
   width: 60px;
-  color: rgba(255, 255, 255, 0.6);
   font-size: 12px;
-  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .event-page-value {
-  color: rgba(255, 255, 255, 0.85);
   font-size: 13px;
-  min-width: 0;
+  color: rgba(255, 255, 255, 0.85);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -105,24 +105,80 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-.event-page-actions {
-  margin-top: 4px;
+/* Attendees list */
+.event-page-attendees-list {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 8px;
 }
 
-/* Responsive: stack on small screens */
+.event-page-attendees-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.event-page-attendees-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.event-page-attendees-li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.event-page-attendee-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.event-page-attendee-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.event-page-attendee-avatar.placeholder {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.event-page-attendee-text {
+  display: grid;
+  gap: 2px;
+}
+
+.event-page-attendee-name {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.event-page-attendee-email,
+.event-page-attendee-when {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Mobile */
 @media (max-width: 600px) {
   .event-page-card {
     grid-template-columns: 1fr;
   }
 
   .event-page-media {
-    width: 100%;
-    height: 200px;
-  }
-
-  .event-page-image,
-  .event-page-image-placeholder {
-    width: 100%;
     height: 200px;
   }
 }

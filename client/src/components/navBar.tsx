@@ -5,11 +5,16 @@ import NavUserChip from "./navUserChip";
 
 export default function NavBar() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/profile");
       setLoggedIn(res.ok);
+      if (res.ok) {
+        const data = await res.json();
+        setIsAdmin(data?.isAdmin ?? false);
+      }
     })();
   }, []);
 
@@ -32,7 +37,7 @@ export default function NavBar() {
       </div>
 
       <div className="navRight">
-        {loggedIn ? (
+        {isAdmin ? (
           <Link className="navLink" to="/add">
             Add event
           </Link>

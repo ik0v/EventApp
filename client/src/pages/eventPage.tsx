@@ -6,6 +6,9 @@ import "./eventsPage.css";
 
 type Attendee = {
   userSub: string;
+  name?: string;
+  picture?: string;
+  email?: string;
   joinedAt?: string;
 };
 
@@ -33,16 +36,19 @@ export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [mySub, setMySub] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   async function loadProfile() {
     try {
       const res = await fetch("/api/profile");
       if (!res.ok) {
         setMySub(null);
+        setIsAdmin(false);
         return;
       }
       const data = await res.json();
       setMySub(data?.sub ?? null);
+      setIsAdmin(data?.isAdmin ?? false);
     } catch {
       setMySub(null);
     }
@@ -166,6 +172,57 @@ export default function EventPage() {
             </div>
           </div>
         </section>
+
+        {isAdmin && (
+          <div className="event-page-attendees-list">
+            <div className="event-page-attendees-title">Attendees</div>
+
+            {(event.attendees ?? []).length === 0 ? (
+              <div className="event-page-attendees-empty">
+                No attendees yet.
+              </div>
+            ) : (
+              <ul className="event-page-attendees-ul">
+                {(event.attendees ?? []).map((a) => (
+                  <li key={a.userSub} className="event-page-attendees-li">
+                    <div className="event-page-attendee-left">
+                      {a.picture ? (
+                        <img
+                          src={a.picture}
+                          alt=""
+                          className="event-page-attendee-avatar"
+                        />
+                      ) : (
+                        <div
+                          className="event-page-attendee-avatar placeholder"
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      <div className="event-page-attendee-text">
+                        <div className="event-page-attendee-name">
+                          {a.name || a.email || a.userSub}
+                        </div>
+
+                        {a.email ? (
+                          <div className="event-page-attendee-email">
+                            {a.email}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    {a.joinedAt ? (
+                      <div className="event-page-attendee-when">
+                        {formatWhen(a.joinedAt)}
+                      </div>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );

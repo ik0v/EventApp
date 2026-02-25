@@ -1,0 +1,35 @@
+.admin-login {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.admin-login input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+}
+
+.admin-login input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-login button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(80, 160, 255, 0.2);
+  color: white;
+  cursor: pointer;
+}
+
+.admin-login button:hover {
+  background: rgba(80, 160, 255, 0.3);
+}
+
+.admin-login-error {
+  color: rgba(255, 120, 120, 0.9);
+  font-size: 13px;
+}

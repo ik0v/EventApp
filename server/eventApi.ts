@@ -66,7 +66,7 @@ export function eventApi(db: Db) {
       }
       const eventId = new ObjectId(id);
 
-      const sub = req.userinfo?.sub;
+      const { sub, name, picture, email } = req.userinfo;
       if (!sub) return res.sendStatus(401);
 
       const events = db.collection("events");
@@ -81,6 +81,9 @@ export function eventApi(db: Db) {
           $push: {
             attendees: {
               userSub: sub,
+              name: name ?? null,
+              picture: picture ?? null,
+              email: email ?? null,
               joinedAt: new Date(),
             },
           },
