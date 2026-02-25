@@ -6,10 +6,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@types/cookie-parser": "^1.4.10",
-    "@types/express": "^5.0.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",
