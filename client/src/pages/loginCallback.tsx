@@ -19,7 +19,6 @@ export default function LoginCallback() {
       headers: { "content-type": "application/json" },
     });
     await reload();
-
     navigate("/events");
   }
 

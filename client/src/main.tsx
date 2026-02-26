@@ -6,7 +6,9 @@ import EventPage from "./pages/eventPage";
 import LoginPage from "./pages/loginPage";
 import LoginCallback from "./pages/loginCallback";
 import AddEventPage from "./pages/addEventPage";
+import AdminRoute from "./components/adminRoute";
 import { AuthProvider } from "./components/authContext";
+import UserProfilePage from "./pages/userProfilePage";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
@@ -24,7 +26,15 @@ function Application() {
       <Route path={"/"} element={<LoginPage />} />
       <Route path={"/events"} element={<EventsPage />} />
       <Route path="/events/:id" element={<EventPage />} />
-      <Route path={"/add"} element={<AddEventPage />} />
+      <Route
+        path={"/add"}
+        element={
+          <AdminRoute>
+            <AddEventPage />
+          </AdminRoute>
+        }
+      />
+      <Route path={"/profile"} element={<UserProfilePage />} />
       <Route path={"*"} element={<h1>Page not found</h1>} />
       <Route path={"/login"} element={<LoginPage />} />
       <Route path={"/login/callback"} element={<LoginCallback />} />

@@ -42,7 +42,6 @@ async function fetchJSON(url: string, options?: RequestInit) {
 const router = express.Router();
 export const eventsApi = router;
 
-// type AuthedRequest = Request & { userinfo?: unknown };
 type AuthedRequest = Request & { userinfo?: UserInfo | unknown };
 
 app.use(async (req: AuthedRequest, res: Response, next: NextFunction) => {
@@ -82,6 +81,26 @@ app.get("/api/profile", (req: AuthedRequest, res) => {
     ...req.userinfo,
     isAdmin: (req as any).signedCookies?.admin === "1",
   });
+});
+
+app.get("/api/user-profile", async (req: AuthedRequest, res) => {
+  const db = client.db("event-app");
+  try {
+    const userinfo = req.userinfo as UserInfo;
+    const user = await db
+      .collection("users")
+      .findOne(
+        { sub: userinfo.sub },
+        { projection: { _id: 0, passwordHash: 0 } },
+      );
+
+    res.json({
+      ...user,
+      role: user?.isAdmin ? "admin" : "user",
+    });
+  } catch (err) {
+    res.status(500).send("Server error");
+  }
 });
 
 app.post("/api/logout", (req, res) => {

@@ -10,6 +10,7 @@ interface Event {
   category: string;
   img_url?: string;
   // attendees?: { userSub: string; joinedAt: Date }[];
+  createdBy?: number;
 }
 
 type GoogleUserInfo = {
@@ -32,7 +33,8 @@ export function eventApi(db: Db) {
   });
 
   router.post("/api/events", async (req, res) => {
-    const { title, description, place, time, category, img_url } = req.body;
+    const { title, description, place, time, category, img_url, createdBy } =
+      req.body;
 
     if (!title || !place || !time || !category) {
       return res.status(400).send("Missing required fields");
@@ -45,6 +47,7 @@ export function eventApi(db: Db) {
       time,
       category,
       img_url,
+      createdBy,
     };
     try {
       const result = await db.collection<Event>("events").insertOne(newEvent);
@@ -54,6 +57,81 @@ export function eventApi(db: Db) {
       });
     } catch (err) {
       res.status(500).send("Database error");
+    }
+  });
+
+  router.put("/api/events/:id", async (req: any, res) => {
+    try {
+      if (!req.userinfo?.sub) return res.sendStatus(401);
+      if (req.signedCookies?.admin !== "1") return res.sendStatus(403);
+
+      const id = String(req.params.id);
+      if (!ObjectId.isValid(id))
+        return res.status(400).send("Invalid event id");
+      const _id = new ObjectId(id);
+
+      const event = await db.collection("events").findOne({ _id });
+      if (!event) return res.sendStatus(404);
+      if (event.createdBy !== req.userinfo.sub) return res.sendStatus(403);
+
+      const set: any = {};
+      const put = (key: string) => {
+        const v = req.body?.[key];
+        if (typeof v !== "string") return;
+        const t = v.trim();
+        if (!t) return;
+        set[key] = t;
+      };
+
+      put("title");
+      put("description");
+      put("place");
+      put("category");
+      put("img_url");
+
+      const t = req.body?.time;
+      if (typeof t === "string" && t.trim()) {
+        const iso = new Date(t).toISOString();
+        if (iso === "Invalid Date") return res.status(400).send("Invalid time");
+        set.time = iso;
+      }
+
+      if (!Object.keys(set).length) return res.status(400).send("No changes");
+
+      await db.collection("events").updateOne({ _id }, { $set: set } as any);
+      res.sendStatus(200);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
+
+  router.delete("/api/events/:id", async (req: any, res) => {
+    try {
+      if (!req.userinfo?.sub) return res.sendStatus(401);
+      if (req.signedCookies?.admin !== "1") return res.sendStatus(403);
+
+      const id = String(req.params.id);
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).send("Invalid event id");
+      }
+
+      const _id = new ObjectId(id);
+
+      // Check ownership
+      const event = await db.collection("events").findOne({ _id });
+      if (!event) return res.sendStatus(404);
+
+      if (event.createdBy !== req.userinfo.sub) {
+        return res.sendStatus(403);
+      }
+
+      // Delete
+      await db.collection("events").deleteOne({ _id });
+
+      res.sendStatus(204); // No Content
+    } catch (err) {
+      res.status(500).send("Server error");
     }
   });
 

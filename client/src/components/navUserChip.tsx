@@ -1,4 +1,5 @@
 import { useAuth } from "./authContext";
+import { useNavigate } from "react-router-dom";
 import "./navBar.css";
 
 type User = {
@@ -8,12 +9,14 @@ type User = {
 };
 
 export default function NavUserChip() {
+  const navigate = useNavigate();
   const { loggedIn, isAdmin, sub, name, email, picture, loadingUser, reload } =
     useAuth();
 
   async function logout() {
     await fetch("/api/logout", { method: "POST" });
-    await reload;
+    await reload();
+    navigate("/login");
   }
 
   if (!loggedIn) {

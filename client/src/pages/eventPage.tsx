@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../components/navBar";
 import { useAuth } from "../components/authContext";
 import "./eventPage.css";
@@ -22,6 +22,7 @@ type EventItem = {
   category?: string;
   imageUrl?: string;
   attendees?: Attendee[];
+  createdBy?: string;
 };
 
 function formatWhen(value?: string) {
@@ -31,13 +32,42 @@ function formatWhen(value?: string) {
   return d.toLocaleString();
 }
 
+// For <input type="datetime-local" />
+function toLocalInputValue(iso?: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours(),
+  )}:${pad(d.getMinutes())}`;
+}
+
 export default function EventPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [event, setEvent] = useState<EventItem | null>(null);
   const [error, setError] = useState("");
-  const [mySub, setMySub] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loggedIn, isAdmin, sub, loadingUser } = useAuth();
+  const { isAdmin, sub } = useAuth();
+
+  const [editing, setEditing] = useState(false);
+  const [eventData, setEventData] = useState<{
+    title: string;
+    description: string;
+    place: string;
+    time: string;
+    category: string;
+    imageUrl: string;
+  }>({
+    title: "",
+    description: "",
+    place: "",
+    time: "",
+    category: "",
+    imageUrl: "",
+  });
 
   async function loadEvent() {
     if (!id) return;
@@ -56,13 +86,68 @@ export default function EventPage() {
     }
   }
 
+  function startEdit() {
+    if (!event) return;
+    setEventData({
+      title: event.title ?? "",
+      description: event.description ?? "",
+      place: event.place ?? "",
+      time: toLocalInputValue(event.time),
+      category: event.category ?? "",
+      imageUrl: event.imageUrl ?? "",
+    });
+    setEditing(true);
+    setError("");
+  }
+
+  function cancelEdit() {
+    setEditing(false);
+    setError("");
+  }
+
+  async function saveEdit() {
+    if (!event) return;
+
+    const payload: any = { ...eventData };
+    if (!payload.time) delete payload.time;
+    else payload.time = new Date(payload.time).toISOString();
+
+    setError("");
+    const res = await fetch(`/api/events/${event._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      setError(`${res.status} ${res.statusText}`);
+      return;
+    }
+
+    setEditing(false);
+    await loadEvent();
+  }
+
+  async function deleteEvent() {
+    if (!event) return;
+    setError("");
+
+    const ok = window.confirm("Delete this event? This cannot be undone.");
+    if (!ok) return;
+
+    const res = await fetch(`/api/events/${event._id}`, { method: "DELETE" });
+    if (!res.ok) {
+      setError(`${res.status} ${res.statusText}`);
+      return;
+    }
+
+    navigate("/events");
+  }
+
   async function toggleAttend(isJoined: boolean) {
     if (!id) return;
 
-    const options: RequestInit = {
-      method: isJoined ? "DELETE" : "POST",
-    };
-
+    const options: RequestInit = { method: isJoined ? "DELETE" : "POST" };
     const res = await fetch(`/api/events/${id}/attend`, options);
 
     if (!res.ok) {
@@ -81,6 +166,7 @@ export default function EventPage() {
   if (error) return <div>{error}</div>;
   if (!event) return <div>Event not found</div>;
 
+  const canEdit = !!isAdmin && !!sub && event.createdBy === sub;
   const isJoined =
     !!sub && (event.attendees ?? []).some((a) => a.userSub === sub);
 
@@ -110,47 +196,159 @@ export default function EventPage() {
               </div>
 
               <div className="event-page-body">
-                <h1 className="event-page-title">{event.title}</h1>
+                <h1 className="event-page-title">
+                  {editing ? (
+                    <input
+                      className="event-edit-input title"
+                      value={eventData.title}
+                      onChange={(e) =>
+                        setEventData((d) => ({ ...d, title: e.target.value }))
+                      }
+                    />
+                  ) : (
+                    event.title
+                  )}
+                </h1>
 
-                {event.category && (
-                  <span className="event-page-badge">{event.category}</span>
-                )}
+                {(event.category || editing) &&
+                  (editing ? (
+                    <input
+                      className="event-edit-input badge"
+                      value={eventData.category}
+                      onChange={(e) =>
+                        setEventData((d) => ({
+                          ...d,
+                          category: e.target.value,
+                        }))
+                      }
+                      placeholder="Category"
+                    />
+                  ) : (
+                    <span className="event-page-badge">{event.category}</span>
+                  ))}
 
-                {event.description && (
-                  <p className="event-page-description">{event.description}</p>
-                )}
+                {(event.description || editing) &&
+                  (editing ? (
+                    <textarea
+                      className="event-edit-textarea"
+                      value={eventData.description}
+                      onChange={(e) =>
+                        setEventData((d) => ({
+                          ...d,
+                          description: e.target.value,
+                        }))
+                      }
+                      placeholder="Description"
+                    />
+                  ) : (
+                    <p className="event-page-description">
+                      {event.description}
+                    </p>
+                  ))}
 
                 <div className="event-page-meta">
-                  {event.place && (
-                    <div className="event-page-row">
-                      <span className="event-page-label">Place</span>
-                      <span className="event-page-value">{event.place}</span>
-                    </div>
+                  {(event.place || editing) && (
+                    <span className="event-page-value">
+                      {editing ? (
+                        <input
+                          className="event-edit-input"
+                          value={eventData.place}
+                          onChange={(e) =>
+                            setEventData((d) => ({
+                              ...d,
+                              place: e.target.value,
+                            }))
+                          }
+                          placeholder="Place"
+                        />
+                      ) : (
+                        event.place
+                      )}
+                    </span>
                   )}
 
-                  {event.time && (
-                    <div className="event-page-row">
-                      <span className="event-page-label">Time</span>
-                      <span className="event-page-value">
-                        {formatWhen(event.time)}
-                      </span>
-                    </div>
+                  {(event.time || editing) && (
+                    <span className="event-page-value">
+                      {editing ? (
+                        <span className="event-time-edit">
+                          <input
+                            type="datetime-local"
+                            className="event-edit-input"
+                            value={eventData.time}
+                            onChange={(e) =>
+                              setEventData((d) => ({
+                                ...d,
+                                time: e.target.value,
+                              }))
+                            }
+                          />
+                          {event.time ? (
+                            <span className="event-time-current">
+                              {formatWhen(event.time)}
+                            </span>
+                          ) : null}
+                        </span>
+                      ) : (
+                        formatWhen(event.time)
+                      )}
+                    </span>
                   )}
                 </div>
 
-                <div className="event-page-attendees">
-                  {event.attendees?.length ?? 0} attending
-                </div>
-
+                {!editing && (
+                  <div className="event-page-attendees">
+                    {event.attendees?.length ?? 0} attending
+                  </div>
+                )}
                 <div className="event-page-actions">
-                  <button
-                    className={`event-join-btn ${isJoined ? "joined" : ""}`}
-                    onClick={() => toggleAttend(isJoined)}
-                    disabled={!sub}
-                    type="button"
-                  >
-                    {sub ? (isJoined ? "Leave" : "Join") : "Login to join"}
-                  </button>
+                  {canEdit && !editing && (
+                    <>
+                      <button
+                        className="event-btn"
+                        type="button"
+                        onClick={startEdit}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="event-btn danger"
+                        type="button"
+                        onClick={deleteEvent}
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+
+                  {canEdit && editing && (
+                    <div className="event-page-actions-row">
+                      <button
+                        className="event-btn primary"
+                        type="button"
+                        onClick={saveEdit}
+                      >
+                        Update
+                      </button>
+                      <button
+                        className="event-btn"
+                        type="button"
+                        onClick={cancelEdit}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+
+                  {!editing && (
+                    <button
+                      className={`event-join-btn ${isJoined ? "joined" : ""}`}
+                      onClick={() => toggleAttend(isJoined)}
+                      disabled={!sub || editing}
+                      type="button"
+                    >
+                      {sub ? (isJoined ? "Leave" : "Join") : "Login to join"}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

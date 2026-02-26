@@ -12,7 +12,6 @@ export default function EventsPage() {
       <NavBar />
 
       <main className="fpMain">
-        <h2>Welcome</h2>
         <section id="events" className="fpSection">
           <ListEvents />
         </section>

@@ -7,14 +7,12 @@
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: 16px;
-
-  background: #151a2e;
-  border-radius: 12px;
   padding: 16px;
-  align-items: stretch; /* 👈 important */
+  border-radius: 12px;
+  background: #151a2e;
+  align-items: stretch;
 }
 
-/* Image column */
 .event-page-media {
   height: 100%;
 }
@@ -23,8 +21,8 @@
 .event-page-image-placeholder {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
   display: block;
+  border-radius: 10px;
 }
 
 .event-page-image {
@@ -40,12 +38,11 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Content */
 .event-page-body {
   display: grid;
   gap: 10px;
   min-width: 0;
-  position: relative; /* 👈 for badge positioning */
+  position: relative;
 }
 
 .event-page-title {
@@ -54,21 +51,18 @@
   line-height: 1.2;
 }
 
-/* 👇 badge now floats top-right */
 .event-page-badge {
   position: absolute;
   top: 0;
   right: 0;
-
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 12px;
-
+  white-space: nowrap;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Text */
 .event-page-description {
   margin: 0;
   font-size: 14px;
@@ -79,17 +73,6 @@
 .event-page-meta {
   display: grid;
   gap: 6px;
-}
-
-.event-page-row {
-  display: flex;
-  gap: 10px;
-}
-
-.event-page-label {
-  width: 60px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 .event-page-value {
@@ -105,7 +88,101 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Attendees list */
+.event-edit-input,
+.event-edit-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font: inherit;
+}
+
+.event-edit-textarea {
+  resize: vertical;
+}
+
+.event-edit-input.title {
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.event-edit-input.badge {
+  width: auto;
+  max-width: 100%;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+
+.event-time-edit {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.event-time-current {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.event-page-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.event-btn,
+.event-join-btn {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  cursor: pointer;
+}
+
+.event-btn:hover,
+.event-join-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.event-btn {
+  width: 132px;
+}
+
+.event-btn.primary {
+  background: rgba(80, 160, 255, 0.2);
+  border-color: rgba(80, 160, 255, 0.35);
+}
+
+.event-btn.primary:hover {
+  background: rgba(80, 160, 255, 0.3);
+}
+
+.event-btn.danger {
+  background: rgba(255, 80, 80, 0.1);
+  border-color: rgba(255, 80, 80, 0.25);
+}
+
+.event-btn.danger:hover {
+  background: rgba(255, 80, 80, 0.18);
+  border-color: rgba(255, 80, 80, 0.35);
+}
+
+.event-join-btn {
+  flex: 0 0 calc(132px * 2 + 10px);
+}
+
+.event-join-btn.joined {
+  background: rgba(80, 160, 255, 0.12);
+  border-color: rgba(80, 160, 255, 0.25);
+}
+
 .event-page-attendees-list {
   margin-top: 8px;
   padding-top: 10px;
@@ -133,7 +210,6 @@
   justify-content: space-between;
   padding: 10px 12px;
   border-radius: 10px;
-
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -142,6 +218,7 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  min-width: 0;
 }
 
 .event-page-attendee-avatar {
@@ -149,6 +226,7 @@
   height: 34px;
   border-radius: 999px;
   object-fit: cover;
+  flex: 0 0 auto;
 }
 
 .event-page-attendee-avatar.placeholder {
@@ -159,11 +237,15 @@
 .event-page-attendee-text {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .event-page-attendee-name {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .event-page-attendee-email,
@@ -172,7 +254,6 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Mobile */
 @media (max-width: 600px) {
   .event-page-card {
     grid-template-columns: 1fr;
@@ -180,5 +261,11 @@
 
   .event-page-media {
     height: 200px;
+  }
+
+  .event-btn,
+  .event-join-btn {
+    width: 100%;
+    flex-basis: auto;
   }
 }

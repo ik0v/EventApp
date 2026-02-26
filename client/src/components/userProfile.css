@@ -1,0 +1,142 @@
+/* Container card */
+.up-card {
+  background: #151a2e;
+  border-radius: 14px;
+  padding: 20px;
+
+  display: grid;
+  gap: 18px;
+
+  max-width: 420px;
+  margin: 0 auto; /* center horizontally */
+  text-align: center;
+}
+
+/* Header */
+.up-header {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+/* Avatar */
+.up-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.up-avatar.placeholder {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Name + email */
+.up-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.up-email {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Role badge */
+.up-badge {
+  margin-top: 4px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.up-badge.admin {
+  background: rgba(80, 160, 255, 0.18);
+  border: 1px solid rgba(80, 160, 255, 0.3);
+}
+
+/* Info grid */
+.up-grid {
+  display: grid;
+  gap: 10px;
+}
+
+/* Rows */
+.up-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.up-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.up-value {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Actions */
+.up-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Reuse same style as .events-reload */
+.up-actions button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  cursor: pointer;
+}
+
+.up-actions button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Muted / loading */
+.up-muted {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+}
+
+/* Mobile tweaks */
+@media (max-width: 500px) {
+  .up-card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .up-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .up-name {
+    font-size: 16px;
+  }
+
+  .up-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

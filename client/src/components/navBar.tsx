@@ -13,8 +13,8 @@ export default function NavBar() {
       </div>
 
       <div className="navCenter">
-        <Link className="navLink navLinkCente" to="/about">
-          About
+        <Link className="navLink navLinkCente" to="/profile">
+          Profile
         </Link>
         <Link className="navLink navLinkCenter" to="/events">
           Events

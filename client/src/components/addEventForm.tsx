@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "./authContext";
 import "./addEventForm.css";
 
 const CATEGORIES = ["Fun", "Education", "Animals"] as const;
@@ -12,34 +13,25 @@ export default function AddEventForm() {
   const [place, setPlace] = useState("");
   const [time, setTime] = useState("");
   const [error, setError] = useState<string>("");
+  const { sub } = useAuth();
 
   useEffect(() => {
-    // (async () => {
-    //   const res = await fetch("/api/categories"); // your endpoint
-    //   const data = await res.json();
-    //   setCategories(data);
-    // })();
     setCategories([...CATEGORIES]);
   }, []);
 
   async function saveEvent(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // const missing: string[] = [];
-    // if (!title.trim()) missing.push("title");
-    // if (!place.trim()) missing.push("place");
-    // if (!time.trim()) missing.push("time");
-    // if (!category.trim()) missing.push("category");
-    //
-    // if (missing.length > 0) {
-    //   setError(`Please fill: ${missing.join(", ")}`);
-    //   return;
-    // }
-    // setError("");
-
     await fetch("/api/events", {
       method: "POST",
-      body: JSON.stringify({ title, description, place, time, category }),
+      body: JSON.stringify({
+        title,
+        description,
+        place,
+        time,
+        category,
+        createdBy: sub,
+      }),
       headers: { "Content-Type": "application/json" },
     });
 
