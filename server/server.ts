@@ -6,6 +6,7 @@ import path from "path";
 import { MongoClient } from "mongodb";
 import { eventApi } from "./eventApi";
 import bcrypt from "bcryptjs";
+import { createApp } from "./app";
 
 dotenv.config();
 const app = express();
@@ -122,6 +123,24 @@ const client = new MongoClient(process.env["MONGODB_URL"]!);
 client.connect().then(async (con) => {
   const db = con.db("event-app");
   app.use(eventApi(db));
+});
+
+async function main() {
+  const con = await client.connect();
+  const db = con.db("event-app");
+
+  const app = createApp({
+    db,
+    sessionSecret: process.env.SESSION_SECRET ?? "dev_secret",
+    staticDir: "../client/dist",
+  });
+
+  app.listen(process.env.PORT || 3000);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
 });
 
 // app.post("/api/login/accessToken", (req, res) => {
