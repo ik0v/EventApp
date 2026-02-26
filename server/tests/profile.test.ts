@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import request from "supertest";
 import type { Db } from "mongodb";
-import { createApp } from "../../app";
+import { createApp } from "../app";
 
 // super-minimal fake db for endpoints that don't touch DB
 const fakeDb = {} as Db;

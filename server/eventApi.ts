@@ -32,30 +32,34 @@ export function eventApi(db: Db) {
     res.json(events);
   });
 
-  router.post("/api/events", async (req, res) => {
-    const { title, description, place, time, category, img_url, createdBy } =
-      req.body;
-
-    if (!title || !place || !time || !category) {
-      return res.status(400).send("Missing required fields");
-    }
-
-    const newEvent: Event = {
-      title,
-      description,
-      place,
-      time,
-      category,
-      img_url,
-      createdBy,
-    };
+  router.post("/api/events", async (req: any, res) => {
     try {
-      const result = await db.collection<Event>("events").insertOne(newEvent);
-      res.status(201).json({
-        // ...newEvent,
-        id: result.insertedId.toString(),
-      });
+      const userinfo = req.userinfo as { sub?: string } | undefined;
+      if (!userinfo?.sub) return res.sendStatus(401); // ✅ must be logged in
+      if (req.signedCookies?.admin !== "1") return res.sendStatus(403); // ✅ must be admin
+
+      const { title, description, place, time, category, img_url } =
+        req.body ?? {};
+
+      if (!title || !place || !time || !category) {
+        return res.status(400).send("Missing required fields");
+      }
+
+      const newEvent = {
+        title: String(title).trim(),
+        description: description ? String(description).trim() : undefined,
+        place: String(place).trim(),
+        time: String(time).trim(),
+        category: String(category).trim(),
+        img_url: img_url ? String(img_url).trim() : undefined,
+        createdBy: userinfo.sub, // ✅ set on server (don’t trust body)
+        createdAt: new Date(),
+      };
+
+      const result = await db.collection("events").insertOne(newEvent);
+      res.status(201).json({ id: result.insertedId.toString() });
     } catch (err) {
+      console.error(err);
       res.status(500).send("Database error");
     }
   });
@@ -142,31 +146,30 @@ export function eventApi(db: Db) {
       if (!ObjectId.isValid(id)) {
         return res.status(400).send("Invalid event id");
       }
+
+      const userinfo = req.userinfo as
+        | { sub?: string; name?: string; email?: string; picture?: string }
+        | undefined;
+      if (!userinfo?.sub) return res.sendStatus(401);
+
       const eventId = new ObjectId(id);
 
-      const { sub, name, picture, email } = req.userinfo;
-      if (!sub) return res.sendStatus(401);
-
-      const events = db.collection("events");
-
-      const updated = await events.updateOne(
-        { _id: eventId, "attendees.userSub": sub },
-        { $set: { "attendees.$.joinedAt": new Date() } },
-      );
-
-      if (updated.matchedCount === 0) {
-        await events.updateOne({ _id: eventId }, {
-          $push: {
-            attendees: {
-              userSub: sub,
-              name: name ?? null,
-              picture: picture ?? null,
-              email: email ?? null,
-              joinedAt: new Date(),
+      await db
+        .collection("events")
+        .updateOne(
+          { _id: eventId, "attendees.userSub": { $ne: userinfo.sub } },
+          {
+            $push: {
+              attendees: {
+                userSub: userinfo.sub,
+                name: userinfo.name ?? null,
+                email: userinfo.email ?? null,
+                picture: userinfo.picture ?? null,
+                joinedAt: new Date(),
+              },
             },
-          },
-        } as any);
-      }
+          } as any,
+        );
 
       res.sendStatus(200);
     } catch (err) {
@@ -178,17 +181,16 @@ export function eventApi(db: Db) {
   router.delete("/api/events/:id/attend", async (req: any, res) => {
     try {
       const id = String(req.params.id);
-
-      if (!ObjectId.isValid(id)) {
+      if (!ObjectId.isValid(id))
         return res.status(400).send("Invalid event id");
-      }
+
+      const userinfo = req.userinfo as { sub?: string } | undefined;
+      if (!userinfo?.sub) return res.sendStatus(401);
+
       const eventId = new ObjectId(id);
 
-      const sub = req.userinfo?.sub;
-      if (!sub) return res.sendStatus(401);
-
       await db.collection("events").updateOne({ _id: eventId }, {
-        $pull: { attendees: { userSub: sub } },
+        $pull: { attendees: { userSub: userinfo.sub } },
       } as any);
 
       res.sendStatus(200);

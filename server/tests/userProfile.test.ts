@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import request from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoClient, type Db } from "mongodb";
-import { createApp } from "../../app";
+import { createApp } from "../app";
 
 let mongod: MongoMemoryServer;
 let client: MongoClient;
