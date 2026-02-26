@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ListEvents from "../components/listEvents";
-import AddEventForm from "../components/addEventForm";
 import NavBar from "../components/navBar";
 import "./eventsPage.css";
 

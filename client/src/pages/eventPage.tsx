@@ -383,7 +383,7 @@ export default function EventPage() {
 
                       <div className="event-page-attendee-text">
                         <div className="event-page-attendee-name">
-                          {a.name || a.email || a.userSub}
+                          {a.name || a.userSub || a.email}
                         </div>
 
                         {a.email ? (

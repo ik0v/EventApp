@@ -19,5 +19,8 @@
     "test:server": "cd server && npm test",
     "prettier:check": "prettier --check .",
     "prepare": "husky"
+  },
+  "dependencies": {
+    "vite": "^7.3.1"
   }
 }
