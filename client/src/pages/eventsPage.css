@@ -1,6 +1,17 @@
 .fp {
   min-height: 100vh;
-  background: #0b1020;
+  background:
+    radial-gradient(
+      900px 500px at 20% 10%,
+      rgba(80, 160, 255, 0.18),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 500px at 90% 30%,
+      rgba(180, 120, 255, 0.12),
+      transparent 55%
+    ),
+    #0f1428;
   color: white;
   padding: 16px;
 }

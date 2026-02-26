@@ -45,6 +45,16 @@ export function eventApi(db: Db) {
         return res.status(400).send("Missing required fields");
       }
 
+      const existingEvent = await db.collection("events").findOne({
+        title: title,
+      });
+      if (existingEvent) {
+        return res.status(409).json({
+          code: "DUPLICATE_TITLE",
+          message: "An event with that title already exists.",
+        });
+      }
+
       const newEvent = {
         title: String(title).trim(),
         description: description ? String(description).trim() : undefined,

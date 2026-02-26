@@ -1,6 +1,17 @@
 .login {
   min-height: 100vh;
-  background: #0b1020;
+  background:
+    radial-gradient(
+      900px 500px at 20% 10%,
+      rgba(80, 160, 255, 0.18),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 500px at 90% 30%,
+      rgba(180, 120, 255, 0.12),
+      transparent 55%
+    ),
+    #0f1428;
   color: white;
   font-family:
     system-ui,
@@ -12,14 +23,90 @@
   padding: 16px;
 }
 
+/* Center the card area below navbar */
 .card {
   width: 100%;
-  max-width: 400px;
-  margin: 60px auto 0;
+  max-width: 420px;
+  margin: 70px auto 0;
+
+  padding: 18px;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  animation: cardIn 220ms ease-out;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card h1 {
+  margin: 0 0 2px;
+  font-size: 28px;
+  letter-spacing: 0.3px;
+}
+
+.card h1::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 10px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+}
+
+/* Ensure everything inside uses same sizing model */
+.card,
+.card * {
+  box-sizing: border-box;
+}
+
+/* Make direct children full width (except the h1) */
+.card > :not(h1) {
+  width: 100%;
 }
 
 @media (min-width: 600px) {
   .card {
     padding: 24px;
+    margin-top: 80px;
   }
+}
+
+.loginSubtitle {
+  margin: -6px 0 6px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+}
+
+.card h1,
+.loginSubtitle {
+  text-align: center;
+}
+
+.loginSubtitle {
+  margin: -6px 0 6px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
 }

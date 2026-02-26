@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "./authContext";
+import Spinner from "./spinner";
 import "./listEvents.css";
 
 export type Attendee = {
@@ -32,20 +33,6 @@ export default function ListEvents() {
   const [error, setError] = useState("");
   const [mySub, setMySub] = useState<string | null>(null);
   const { loggedIn, isAdmin, sub, loadingUser } = useAuth();
-
-  // async function loadProfile(): Promise<void> {
-  //   try {
-  //     const res = await fetch("/api/profile");
-  //     if (!res.ok) {
-  //       setMySub(null);
-  //       return;
-  //     }
-  //     const data = await res.json();
-  //     setMySub(data?.sub ?? null);
-  //   } catch {
-  //     setMySub(null);
-  //   }
-  // }
 
   async function loadEvents(): Promise<void> {
     try {
@@ -102,7 +89,9 @@ export default function ListEvents() {
       {error ? <div className="events-error">{error}</div> : null}
 
       {loading ? (
-        <div className="events-muted">Loading…</div>
+        <div className="events-loading">
+          <Spinner size={28} />
+        </div>
       ) : events.length === 0 ? (
         <div className="events-muted">No events yet.</div>
       ) : (

@@ -96,7 +96,7 @@ describe("EventPage", () => {
 
     const app = renderEventAt("1");
 
-    expect(app.getByText(/Loading/i)).toBeInTheDocument();
+    expect(app.container.querySelector('[aria-busy="true"]')).toBeTruthy();
     expect(await app.findByText("My Event")).toBeInTheDocument();
 
     expect(app.getByText("NavBar")).toBeInTheDocument();

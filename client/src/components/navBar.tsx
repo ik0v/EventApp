@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "./authContext";
 import NavUserChip from "./navUserChip";
+import LogoutButton from "./logoutButton";
 import "./navBar.css";
 
 export default function NavBar() {
@@ -19,9 +20,13 @@ export default function NavBar() {
         <Link className="navLink navLinkCenter" to="/events">
           Events
         </Link>
-        <Link className="navLink navLinkCenter" to="/">
-          Login
-        </Link>
+        {loggedIn ? (
+          <LogoutButton className="navLink navLinkCenter navBtn" />
+        ) : (
+          <Link className="navLink navLinkCenter" to="/login">
+            Login
+          </Link>
+        )}
       </div>
 
       <div className="navRight">

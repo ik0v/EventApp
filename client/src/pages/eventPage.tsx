@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../components/navBar";
 import { useAuth } from "../components/authContext";
+import Spinner from "../components/spinner";
 import "./eventPage.css";
 import "./eventsPage.css";
 
@@ -162,7 +163,12 @@ export default function EventPage() {
     loadEvent();
   }, [id]);
 
-  if (loading) return <div>Loading…</div>;
+  if (loading)
+    return (
+      <div className="page-loading" aria-busy="true">
+        <Spinner size={32} />
+      </div>
+    );
   if (error) return <div>{error}</div>;
   if (!event) return <div>Event not found</div>;
 

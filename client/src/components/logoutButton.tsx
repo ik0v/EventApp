@@ -3,9 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 type LogoutButtonProps = {
   onLogout?: () => void;
+  className?: string;
 };
 
-export default function LogoutButton({ onLogout }: LogoutButtonProps) {
+export default function LogoutButton({
+  onLogout,
+  className,
+}: LogoutButtonProps) {
   const { reload } = useAuth();
   const navigate = useNavigate();
 
@@ -16,5 +20,9 @@ export default function LogoutButton({ onLogout }: LogoutButtonProps) {
     navigate("/login");
   }
 
-  return <button onClick={logout}>Logout</button>;
+  return (
+    <button type="button" className={className} onClick={logout}>
+      Logout
+    </button>
+  );
 }

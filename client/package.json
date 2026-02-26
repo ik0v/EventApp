@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "tsc --noEmit && cross-env NODE_ENV=test vitest"
+    "test": "tsc --noEmit && cross-env NODE_ENV=test vitest",
+    "test:coverage": "vitest run --coverage"
   }
 }

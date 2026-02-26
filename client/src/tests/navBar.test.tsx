@@ -80,7 +80,9 @@ describe("NavBar", () => {
     // So we assert using getAllByRole and verify at least one points to "/".
     const loginLinks = app.getAllByRole("link", { name: "Login" });
     expect(loginLinks.length).toBeGreaterThanOrEqual(1);
-    expect(loginLinks.some((a) => a.getAttribute("href") === "/")).toBe(true);
+    expect(loginLinks.some((a) => a.getAttribute("href") === "/login")).toBe(
+      true,
+    );
   });
 
   it("shows 'Add event' link only for admins", () => {
@@ -102,15 +104,14 @@ describe("NavBar", () => {
 });
 
 describe("NavUserChip", () => {
-  it("when logged out: renders Login anchor to /login", () => {
+  it("when logged out: renders nothing", () => {
     authState.loggedIn = false;
 
     const app = renderWithRouter(<NavUserChip />);
-    const login = app.getByRole("link", { name: "Login" });
-    expect(login).toHaveAttribute("href", "/login");
+    expect(app.container).toBeEmptyDOMElement();
   });
 
-  it("when logged in: renders avatar + name + logout button", () => {
+  it("when logged in: renders avatar + name (no logout button)", () => {
     authState.loggedIn = true;
     authState.name = "Ivan";
     authState.picture = "https://example.com/p.png";
@@ -119,44 +120,11 @@ describe("NavUserChip", () => {
 
     expect(app.getByText("Ivan")).toBeInTheDocument();
 
+    // decorative img -> role is presentation (alt="")
     const avatar = app.getByRole("presentation", { name: "" });
     expect(avatar).toHaveAttribute("src", "https://example.com/p.png");
 
-    expect(app.getByRole("button", { name: "Logout" })).toBeInTheDocument();
-  });
-
-  it("logout: POSTs /api/logout, calls reload, then navigates to /login", async () => {
-    authState.loggedIn = true;
-    authState.name = "Ivan";
-    authState.picture = "https://example.com/p.png";
-
-    const fetchSpy = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      statusText: "OK",
-      json: async () => ({}),
-    })) as any;
-
-    vi.stubGlobal("fetch", fetchSpy);
-
-    const app = render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route path="/" element={<NavUserChip />} />
-          <Route path="/login" element={<div>LoginPage</div>} />
-        </Routes>
-      </MemoryRouter>,
-    );
-
-    fireEvent.click(app.getByRole("button", { name: "Logout" }));
-
-    // 1) logout request
-    expect(fetchSpy).toHaveBeenCalledWith("/api/logout", { method: "POST" });
-
-    // 2) reload called (logout awaits it)
-    await vi.waitFor(() => expect(reloadMock).toHaveBeenCalledTimes(1));
-
-    // 3) navigation happened
-    expect(await app.findByText("LoginPage")).toBeInTheDocument();
+    // logout is handled in NavBar now
+    expect(app.queryByRole("button", { name: /Logout/i })).toBeNull();
   });
 });

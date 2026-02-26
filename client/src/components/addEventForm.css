@@ -1,6 +1,19 @@
+.aefWrap {
+  position: relative;
+}
+
+/* existing */
 .add-event-form {
   display: grid;
   gap: 12px;
+  transition:
+    opacity 220ms ease,
+    filter 220ms ease,
+    transform 220ms ease;
+}
+
+.add-event-form.isSaving {
+  opacity: 0.92;
 }
 
 .form-title {
@@ -37,6 +50,10 @@
   color: white;
   outline: none;
   font: inherit;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease,
+    opacity 180ms ease;
 }
 
 .form-input option {
@@ -46,6 +63,10 @@
 
 .form-input:focus {
   border-color: rgba(255, 255, 255, 0.25);
+}
+
+.form-input:disabled {
+  opacity: 0.65;
 }
 
 .form-textarea {
@@ -61,10 +82,46 @@
   color: black;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease,
+    filter 120ms ease;
 }
 
 .form-btn:hover {
   opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.form-btn:active {
+  transform: translateY(0px);
+}
+
+.form-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+  filter: grayscale(0.1);
+}
+
+.btnInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-top-color: rgba(0, 0, 0, 0.85);
+  animation: aefSpin 0.85s linear infinite;
+}
+
+@keyframes aefSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .aefError {
@@ -74,4 +131,162 @@
   border: 1px solid rgba(255, 80, 80, 0.35);
   color: rgba(255, 220, 220, 0.95);
   font-size: 14px;
+}
+
+/* Success toast */
+.aefToast {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -12px;
+  transform: translateY(14px);
+  opacity: 0;
+  pointer-events: none;
+
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
+}
+
+.aefToast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.aefToastTitle {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.aefToastText {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.aefToastActions {
+  display: flex;
+  gap: 10px;
+}
+
+.aefToastBtn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease,
+    background 120ms ease;
+}
+
+.aefToastBtn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.aefToastBtn.primary {
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Success card (replaces form after submit) */
+.aefSuccessCard {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  padding: 16px;
+  max-width: 560px;
+
+  animation: aefPopIn 220ms ease-out;
+}
+
+@keyframes aefPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.aefSuccessIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 18px;
+  margin-bottom: 10px;
+
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+}
+
+.aefSuccessTitle {
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.aefSuccessText {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.aefSuccessActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.aefSuccessBtn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease,
+    background 120ms ease;
+}
+
+.aefSuccessBtn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.aefSuccessBtn.primary {
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.aefSuccessWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 220px; /* gives it vertical breathing space */
+}
+
+.aefSuccessIcon.warn {
+  background: rgba(255, 210, 90, 0.95);
+  color: black;
 }

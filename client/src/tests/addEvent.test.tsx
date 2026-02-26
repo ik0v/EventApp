@@ -53,7 +53,7 @@ describe("AddEventForm", () => {
     expect(select.value).toBe("");
   });
 
-  it("submits POST /api/events with payload including createdBy and then clears fields", async () => {
+  it("submits POST /api/events, shows success result, then 'Add another' brings back empty form", async () => {
     authState.sub = "u1";
 
     const fetchSpy = vi.fn(async () => ({
@@ -77,13 +77,12 @@ describe("AddEventForm", () => {
     fireEvent.change(place, { target: { value: "Oslo" } });
     fireEvent.change(time, { target: { value: "2026-02-26T12:30" } });
 
-    // category options appear after effect; ensure present before selecting
     await app.findByRole("option", { name: "Fun" });
     fireEvent.change(category, { target: { value: "Fun" } });
 
     fireEvent.click(app.getByRole("button", { name: /Submit/i }));
 
-    // assert fetch called with correct request
+    // request was sent
     expect(fetchSpy).toHaveBeenCalledWith(
       "/api/events",
       expect.objectContaining({
@@ -104,13 +103,28 @@ describe("AddEventForm", () => {
       createdBy: "u1",
     });
 
-    // fields cleared after submit (async state updates)
+    // success result card replaces the form
+    expect(await app.findByText(/Event added/i)).toBeInTheDocument();
+    expect(
+      app.getByRole("button", { name: /Add another/i }),
+    ).toBeInTheDocument();
+    expect(
+      app.getByRole("button", { name: /Go to events/i }),
+    ).toBeInTheDocument();
+
+    // click add another -> form comes back empty
+    fireEvent.click(app.getByRole("button", { name: /Add another/i }));
+
     await waitFor(() => {
-      expect(title.value).toBe("");
-      expect(desc.value).toBe("");
-      expect(place.value).toBe("");
-      expect(time.value).toBe("");
-      expect(category.value).toBe("");
+      expect((app.getByLabelText(/Title/i) as HTMLInputElement).value).toBe("");
+      expect(
+        (app.getByLabelText(/Description/i) as HTMLTextAreaElement).value,
+      ).toBe("");
+      expect((app.getByLabelText(/Place/i) as HTMLInputElement).value).toBe("");
+      expect((app.getByLabelText(/Time/i) as HTMLInputElement).value).toBe("");
+      expect((app.getByLabelText(/Category/i) as HTMLSelectElement).value).toBe(
+        "",
+      );
     });
   });
 

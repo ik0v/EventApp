@@ -120,7 +120,7 @@ describe("ListEvents", () => {
 
     const app = renderWithRouter(<ListEvents />);
 
-    expect(app.getByText(/Loading/i)).toBeInTheDocument();
+    expect(app.container.querySelector(".events-loading")).toBeTruthy();
     expect(await app.findByText("No events yet.")).toBeInTheDocument();
   });
 

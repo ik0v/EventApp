@@ -9,6 +9,7 @@ export default function LoginPage() {
       <NavBar />
       <div className="card">
         <h1>EventApp</h1>
+        <p className="loginSubtitle">Sign in to discover and create events.</p>
         <LoginButton />
         <AdminLogin />
       </div>
