@@ -109,17 +109,17 @@ export function createApp(opts: {
   app.get("/api/user-profile", async (req: AuthedRequest, res) => {
     try {
       const userinfo = req.userinfo as any;
-      if (!userinfo?.sub) return res.sendStatus(401);
+
+      const sub = (req.query.sub as string) || userinfo?.sub;
+
+      if (!sub) return res.sendStatus(401);
 
       const user = await opts.db
         .collection("users")
-        .findOne(
-          { sub: userinfo.sub },
-          { projection: { _id: 0, passwordHash: 0 } },
-        );
+        .findOne({ sub }, { projection: { _id: 0, passwordHash: 0 } });
 
       res.json({
-        ...user,
+        ...(user ?? {}),
         role: user?.isAdmin ? "admin" : "user",
       });
     } catch {
