@@ -3,9 +3,10 @@
 Simple fullstack event management app built with React, Node.js, and MongoDB.
 
 ## 🌐 Live Demo
-👉 https://your-heroku-app-url.herokuapp.com
+https://your-heroku-app-url.herokuapp.com
 
-
+## Github Link
+https://github.com/ik0v/EventApp
 
 ## 🧪 Test Coverage
 
