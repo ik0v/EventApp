@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "./authContext";
 import Spinner from "./spinner";
@@ -20,6 +20,8 @@ export type EventItem = {
   attendees?: Attendee[];
 };
 
+const CATEGORIES = ["Fun", "Education", "Animals"] as const;
+
 function formatWhen(value?: string) {
   if (!value) return "";
   const d = new Date(value);
@@ -27,19 +29,52 @@ function formatWhen(value?: string) {
   return d.toLocaleString();
 }
 
+type Filters = {
+  title: string;
+  place: string;
+  category: string; // "" means All
+  from: string; // YYYY-MM-DD
+  to: string; // YYYY-MM-DD
+};
+
 export default function ListEvents() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [mySub, setMySub] = useState<string | null>(null);
-  const { loggedIn, isAdmin, sub, loadingUser } = useAuth();
+
+  const { sub } = useAuth();
+
+  // UI filters
+  const [filters, setFilters] = useState<Filters>({
+    title: "",
+    place: "",
+    category: "",
+    from: "",
+    to: "",
+  });
+
+  // Applied filters (used by fetch)
+  const [applied, setApplied] = useState<Filters>(filters);
+
+  const queryString = useMemo(() => {
+    const qs = new URLSearchParams();
+
+    if (applied.title.trim()) qs.set("title", applied.title.trim());
+    if (applied.place.trim()) qs.set("place", applied.place.trim());
+    if (applied.category) qs.set("category", applied.category);
+    if (applied.from) qs.set("from", applied.from); // date-only
+    if (applied.to) qs.set("to", applied.to); // date-only
+
+    const s = qs.toString();
+    return s ? `?${s}` : "";
+  }, [applied]);
 
   async function loadEvents(): Promise<void> {
     try {
       setLoading(true);
       setError("");
 
-      const res = await fetch("/api/events");
+      const res = await fetch(`/api/events${queryString}`);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 
       const data: EventItem[] = await res.json();
@@ -57,25 +92,41 @@ export default function ListEvents() {
       setError("You must be logged in to join events.");
       return;
     }
+
     const options: RequestInit = {
       method: isJoined ? "DELETE" : "POST",
       headers: { "Content-Type": "application/json" },
     };
-    if (!isJoined) {
-      options.body = JSON.stringify({ status: "going" });
-    }
-    const res = await fetch(`/api/events/${eventId}/attend`, options);
+    if (!isJoined) options.body = JSON.stringify({ status: "going" });
 
+    const res = await fetch(`/api/events/${eventId}/attend`, options);
     if (!res.ok) {
       setError(`${res.status} ${res.statusText}`);
       return;
     }
+
     await loadEvents();
+  }
+
+  function applyFilters() {
+    setApplied(filters);
+  }
+
+  function clearFilters() {
+    const empty: Filters = {
+      title: "",
+      place: "",
+      category: "",
+      from: "",
+      to: "",
+    };
+    setFilters(empty);
+    setApplied(empty);
   }
 
   useEffect(() => {
     loadEvents();
-  }, []);
+  }, [queryString]);
 
   return (
     <section className="events">
@@ -86,10 +137,98 @@ export default function ListEvents() {
         </button>
       </div>
 
+      {/* Filters */}
+      <div className="events-filters">
+        <div className="events-filter-grid">
+          <label className="events-filter">
+            <span className="events-filter-label">Title</span>
+            <input
+              className="events-filter-input"
+              value={filters.title}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, title: e.target.value }))
+              }
+              placeholder="Search title…"
+            />
+          </label>
+
+          <label className="events-filter">
+            <span className="events-filter-label">Place</span>
+            <input
+              className="events-filter-input"
+              value={filters.place}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, place: e.target.value }))
+              }
+              placeholder="Oslo, Bergen…"
+            />
+          </label>
+
+          <label className="events-filter">
+            <span className="events-filter-label">Category</span>
+            <select
+              className="events-filter-input"
+              value={filters.category}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, category: e.target.value }))
+              }
+            >
+              <option value="">All</option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="events-filter">
+            <span className="events-filter-label">From</span>
+            <input
+              className="events-filter-input"
+              type="date"
+              value={filters.from}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, from: e.target.value }))
+              }
+            />
+          </label>
+
+          <label className="events-filter">
+            <span className="events-filter-label">To</span>
+            <input
+              className="events-filter-input"
+              type="date"
+              value={filters.to}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, to: e.target.value }))
+              }
+            />
+          </label>
+        </div>
+
+        <div className="events-filter-actions">
+          <button
+            type="button"
+            className="events-filter-btn primary"
+            onClick={applyFilters}
+          >
+            Apply
+          </button>
+          <button
+            type="button"
+            className="events-filter-btn"
+            onClick={clearFilters}
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+
       {error ? <div className="events-error">{error}</div> : null}
 
       {loading ? (
-        <div className="events-loading">
+        <div className="events-loading" aria-busy="true">
           <Spinner size={28} />
         </div>
       ) : events.length === 0 ? (
@@ -105,7 +244,14 @@ export default function ListEvents() {
                 <Link to={`/events/${e._id}`} className="event-link">
                   <div className="event-media">
                     {e.imageUrl ? (
-                      <img className="event-image" src={e.imageUrl} alt="" />
+                      <img
+                        className="event-image"
+                        src={e.imageUrl}
+                        alt=""
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
                     ) : (
                       <div
                         className="event-image-placeholder"

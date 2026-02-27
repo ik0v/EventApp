@@ -44,6 +44,13 @@ function toLocalInputValue(iso?: string) {
   )}:${pad(d.getMinutes())}`;
 }
 
+function formatDateOnly(value?: string) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString();
+}
+
 export default function EventPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -69,6 +76,11 @@ export default function EventPage() {
     category: "",
     imageUrl: "",
   });
+  const [creator, setCreator] = useState<{
+    name?: string;
+    picture?: string;
+    email?: string;
+  } | null>(null);
 
   async function loadEvent() {
     if (!id) return;
@@ -76,10 +88,33 @@ export default function EventPage() {
     try {
       setLoading(true);
       const res = await fetch(`/api/events/${id}`);
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      if (!res.ok) {
+        let msg = `${res.status} ${res.statusText}`;
+        try {
+          const data = await res.json();
+          if (data?.message) msg = data.message; // e.g. "Wrong event id format"
+        } catch {}
+        throw new Error(msg);
+      }
 
       const data: EventItem = await res.json();
       setEvent(data);
+
+      if (data.createdBy) {
+        try {
+          const userRes = await fetch(
+            `/api/user-profile?sub=${data.createdBy}`,
+          );
+          if (userRes.ok) {
+            const user = await userRes.json();
+            setCreator(user);
+          } else {
+            setCreator(null);
+          }
+        } catch {
+          setCreator(null);
+        }
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load event");
     } finally {
@@ -360,6 +395,36 @@ export default function EventPage() {
             </div>
           </div>
         </section>
+
+        {event && (
+          <div className="event-creator-wrap">
+            <div className="event-creator-card">
+              <div className="event-creator-title">Created by</div>
+
+              <div className="event-creator-content">
+                {creator?.picture ? (
+                  <img
+                    src={creator.picture}
+                    alt=""
+                    className="event-creator-avatar"
+                  />
+                ) : (
+                  <div className="event-creator-avatar placeholder" />
+                )}
+
+                <div className="event-creator-text">
+                  <div className="event-creator-name">
+                    {creator?.name || creator?.email || event.createdBy}
+                  </div>
+
+                  <div className="event-creator-date">
+                    {formatDateOnly(event.time)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {isAdmin && (
           <div className="event-page-attendees-list">

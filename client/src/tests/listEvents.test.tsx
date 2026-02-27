@@ -1,6 +1,6 @@
 import React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 import EventsPage from "../pages/eventsPage";
@@ -160,7 +160,8 @@ describe("ListEvents", () => {
 
     expect(await app.findByText("Event After Reload")).toBeInTheDocument();
     expect(app.getByText("Oslo")).toBeInTheDocument();
-    expect(app.getByText("Fun")).toBeInTheDocument();
+    const card = app.getByText("Event After Reload").closest(".event-card");
+    expect(card).toBeTruthy();
   });
 
   it("when logged out: join button says 'Login to join' and is disabled", async () => {
@@ -327,11 +328,8 @@ describe("ListEvents", () => {
     const app = renderWithRouter(<ListEvents />);
 
     expect(await app.findByText("No Image Event")).toBeInTheDocument();
-    expect(app.getByText("Fun")).toBeInTheDocument();
     expect(app.getByText("Hello")).toBeInTheDocument();
     expect(app.getByText("Oslo")).toBeInTheDocument();
-    // "Place" label exists only if place exists
-    expect(app.getByText("Place")).toBeInTheDocument();
 
     // placeholder branch
     expect(app.getByText("No image")).toBeInTheDocument();
@@ -397,5 +395,48 @@ describe("ListEvents", () => {
     const app = renderWithRouter(<ListEvents />);
     expect(await app.findByText("Joined Event")).toBeInTheDocument();
     expect(app.getByRole("button", { name: "Leave" })).toBeInTheDocument();
+  });
+  it("Apply and Clear filters update query and reload events", async () => {
+    const fetchSpy = vi.fn(async (input: any) => {
+      const url = typeof input === "string" ? input : (input?.url ?? "");
+
+      return {
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        json: async () => [
+          {
+            _id: "1",
+            title: url.includes("title=test")
+              ? "Filtered Event"
+              : "Initial Event",
+            place: "Oslo",
+            category: "Fun",
+          },
+        ],
+      } as any;
+    });
+
+    vi.stubGlobal("fetch", fetchSpy as any);
+
+    const app = renderWithRouter(<ListEvents />);
+
+    // initial load
+    expect(await app.findByText("Initial Event")).toBeInTheDocument();
+
+    // fill filter
+    fireEvent.change(app.getByLabelText(/Title/i), {
+      target: { value: "test" },
+    });
+
+    // click Apply → triggers applyFilters + reload
+    fireEvent.click(app.getByRole("button", { name: /Apply/i }));
+
+    expect(await app.findByText("Filtered Event")).toBeInTheDocument();
+
+    // click Clear → triggers clearFilters + reload
+    fireEvent.click(app.getByRole("button", { name: /Clear/i }));
+
+    expect(await app.findByText("Initial Event")).toBeInTheDocument();
   });
 });

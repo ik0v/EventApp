@@ -113,13 +113,16 @@ describe("EventPage", () => {
     expect(await app.findByText(/500/i)).toBeInTheDocument();
   });
 
-  it("shows 'Event not found' when API returns null event", async () => {
+  it("shows error when event id format is wrong", async () => {
     mockFetch({
-      "/api/events/1": { ok: true, status: 200, body: null },
+      "/api/events/1": {
+        ok: false,
+        status: 404,
+        body: { message: "Wrong event id format" },
+      },
     });
-
     const app = renderEventAt("1");
-    expect(await app.findByText(/Event not found/i)).toBeInTheDocument();
+    expect(await app.findByText(/Wrong event id format/i)).toBeInTheDocument();
   });
 
   it("non-owner admin cannot edit/delete (createdBy mismatch)", async () => {

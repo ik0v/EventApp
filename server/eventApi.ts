@@ -28,8 +28,41 @@ export function eventApi(db: Db) {
   const router = express.Router();
 
   router.get("/api/events", async (req, res) => {
-    const events = await db.collection("events").find({}).toArray();
-    res.json(events);
+    try {
+      const { title, place, category, from, to } = req.query;
+
+      const query: any = {};
+      if (title && typeof title === "string") {
+        query.title = { $regex: title, $options: "i" };
+      }
+      if (place && typeof place === "string") {
+        query.place = { $regex: place, $options: "i" };
+      }
+      if (category && typeof category === "string") {
+        query.category = category;
+      }
+      if (from || to) {
+        query.time = {};
+
+        if (typeof from === "string") {
+          const fromDate = new Date(from);
+          fromDate.setHours(0, 0, 0, 0);
+          query.time.$gte = fromDate.toISOString();
+        }
+
+        if (typeof to === "string") {
+          const toDate = new Date(to);
+          toDate.setHours(23, 59, 59, 999);
+          query.time.$lte = toDate.toISOString();
+        }
+      }
+
+      const events = await db.collection("events").find(query).toArray();
+
+      res.json(events);
+    } catch (err) {
+      res.status(500).json({ message: "Failed to fetch events" });
+    }
   });
 
   router.post("/api/events", async (req: any, res) => {
@@ -212,8 +245,12 @@ export function eventApi(db: Db) {
 
   router.get("/api/events/:id", async (req, res) => {
     try {
+      const { id } = req.params;
+      if (!ObjectId.isValid(id)) {
+        return res.status(404).json({ message: "Wrong event id format" });
+      }
       const event = await db.collection("events").findOne({
-        _id: new ObjectId(req.params.id),
+        _id: new ObjectId(id),
       });
 
       if (!event) return res.sendStatus(404);
